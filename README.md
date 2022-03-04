@@ -16,6 +16,18 @@ This library is made for the use with [Composer](https://packagist.org/packages/
 
 **Please note** that this library requires you to have a valid API token.
 
+```php
+<?php
+
+use WhatColorIs\APIClient\ColorInformationLoader\WhatColorIsAPI;
+use WhatColorIs\APIClient\Enum\ColorSystem;
+
+WhatColorIsAPI::setApiKey('token');
+
+$whatColorIsAPI = new WhatColorIsAPI();
+$response = $whatColorIsAPI->request(ColorSystem::RGB(), '125 255 0');
+```
+
 ## Help 
 
 If you have any questions, feel free to contact us under `hello@bitandblack.com`.
