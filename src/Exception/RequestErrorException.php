@@ -11,15 +11,16 @@
 
 namespace WhatColorIs\APIClient\Exception;
 
+use Throwable;
 use WhatColorIs\APIClient\Exception;
 
 /**
- * Class APIKeyMissingException.
+ * Class RequestErrorException.
  */
-class APIKeyMissingException extends Exception
+class RequestErrorException extends Exception
 {
-    public function __construct()
+    public function __construct(Throwable $exception)
     {
-        parent::__construct('The API token for the WhatColorIs REST API is missing. See more under https://www.whatcolor.is/rest-api.html');
+        parent::__construct($exception->getMessage());
     }
 }

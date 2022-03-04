@@ -17,6 +17,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use JsonException;
+use WhatColorIs\APIClient\Exception\RequestErrorException;
 
 /**
  * Class WhatColorIsAPI.
@@ -80,6 +81,7 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
      * @param string|null $colorName
      * @return array<mixed>
      * @throws APIKeyMissingException
+     * @throws RequestErrorException
      */
     public function request(ColorSystem $colorSystem, string $colorName = null): array
     {
@@ -114,12 +116,7 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
              */
             $response = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
         } catch (GuzzleException|JsonException $exception) {
-            echo $exception;
-            return [];
-        }
-
-        if (200 !== $guzzleResponse->getStatusCode()) {
-            return [];
+            throw new RequestErrorException($exception);
         }
 
         return $response['payload'];
