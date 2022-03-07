@@ -21,11 +21,11 @@ interface ColorInformationLoaderInterface
     /**
      * @param ColorSystem $colorSystem Name of the requested color system.
      * @return array{
-     *     systems: array{
+     *     systems: array<int, array{
      *         system: string,
      *         prefix: string,
      *         suffix: string,
-     *     }
+     *     }>
      * }
      */
     public function requestColorSystem(ColorSystem $colorSystem): array;

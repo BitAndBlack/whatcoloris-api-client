@@ -79,11 +79,11 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
     /**
      * @param ColorSystem $colorSystem
      * @return array{
-     *     systems?: array{
+     *     systems: array<int, array{
      *         system: string,
      *         prefix: string,
      *         suffix: string,
-     *     }
+     *     }>
      * }
      * @throws APIKeyMissingException
      * @throws RequestErrorException
@@ -111,7 +111,13 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
             $responseBody = $guzzleResponse->getBody()->getContents();
             /**
              * @var array{
-             *     payload: array<mixed>
+             *     payload: array{
+             *         systems: array<int, array{
+             *             system: string,
+             *             prefix: string,
+             *             suffix: string,
+             *         }>
+             *     }
              * } $restAPIResponse
              */
             $restAPIResponse = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
@@ -126,11 +132,11 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
      * @param ColorSystem $colorSystem
      * @param string $colorName
      * @return array{
-     *     name_short?: string,
-     *     name_full?: string,
-     *     systems?: array<int, string>,
-     *     prefix?: string,
-     *     suffix?: string,
+     *     name_short: string,
+     *     name_full: string,
+     *     systems: array<int, string>,
+     *     prefix: string,
+     *     suffix: string,
      *     values: array<string, array<string|int, int|float|string>>
      * }
      * @throws APIKeyMissingException
@@ -162,7 +168,14 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
             $responseBody = $guzzleResponse->getBody()->getContents();
             /**
              * @var array{
-             *     payload: array<mixed>
+             *     payload: array{
+             *         name_short: string,
+             *         name_full: string,
+             *         systems: array<int, string>,
+             *         prefix: string,
+             *         suffix: string,
+             *         values: array<string, array<string|int, int|float|string>>
+             *     }
              * } $restAPIResponse
              */
             $restAPIResponse = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
