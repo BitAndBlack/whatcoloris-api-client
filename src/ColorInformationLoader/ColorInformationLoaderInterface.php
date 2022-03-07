@@ -20,15 +20,7 @@ interface ColorInformationLoaderInterface
 {
     /**
      * @param ColorSystem $colorSystem Name of the requested color system.
-     * @param string|null $colorName   Name of a specific color.
      * @return array{
-     *     name_short: string,
-     *     name_full: string,
-     *     systems: array<int, string>,
-     *     prefix: string,
-     *     suffix: string,
-     *     values: array<string, array<string|int, int|float|string>>
-     * }|array{
      *     systems: array{
      *         system: string,
      *         prefix: string,
@@ -36,5 +28,19 @@ interface ColorInformationLoaderInterface
      *     }
      * }
      */
-    public function request(ColorSystem $colorSystem, string $colorName = null): array;
+    public function requestColorSystem(ColorSystem $colorSystem): array;
+
+    /**
+     * @param ColorSystem $colorSystem Name of the requested color system.
+     * @param string $colorName        Name of a specific color.
+     * @return array{
+     *     name_short: string,
+     *     name_full: string,
+     *     systems: array<int, string>,
+     *     prefix: string,
+     *     suffix: string,
+     *     values: array<string, array<string|int, int|float|string>>
+     * }
+     */
+    public function requestColorValue(ColorSystem $colorSystem, string $colorName): array;
 }

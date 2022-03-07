@@ -25,7 +25,7 @@ use WhatColorIs\APIClient\Enum\ColorSystem;
 WhatColorIsAPI::setApiKey('token');
 
 $whatColorIsAPI = new WhatColorIsAPI();
-$response = $whatColorIsAPI->request(ColorSystem::RGB(), '125 255 0');
+$response = $whatColorIsAPI->requestColorValue(ColorSystem::RGB(), '125 255 0');
 ```
 
 ## Help 

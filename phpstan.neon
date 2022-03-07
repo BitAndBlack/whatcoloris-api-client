@@ -4,3 +4,8 @@ parameters:
     paths:
         - src
         - tests
+services:
+	-
+		class: WhatColorIs\APIClient\PHPStan\ConstantsExtension
+		tags:
+			- phpstan.constants.alwaysUsedClassConstantsExtension

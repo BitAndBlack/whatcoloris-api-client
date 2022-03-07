@@ -78,16 +78,8 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
 
     /**
      * @param ColorSystem $colorSystem
-     * @param string|null $colorName
      * @return array{
-     *     name_short?: string,
-     *     name_full?: string,
-     *     systems?: array<int, string>,
-     *     prefix?: string,
-     *     suffix?: string,
-     *     values: array<string, array<string|int, int|float|string>>
-     * }|array{
-     *     systems: array{
+     *     systems?: array{
      *         system: string,
      *         prefix: string,
      *         suffix: string,
@@ -96,23 +88,9 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
      * @throws APIKeyMissingException
      * @throws RequestErrorException
      */
-    public function request(ColorSystem $colorSystem, string $colorName = null): array
+    public function requestColorSystem(ColorSystem $colorSystem): array
     {
         $uri = self::getURI().'/'.$colorSystem->getValue();
-
-        $response = null !== $colorName
-            ? [
-                'values' => [],
-            ]
-            : [
-                'systems' => [],
-            ]
-        ;
-        
-        if (null !== $colorName) {
-            $colorNameSlug = urlencode(strtolower($colorName));
-            $uri .= '/'.$colorNameSlug;
-        }
 
         $uri .= '.json';
         
@@ -141,6 +119,57 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
             throw new RequestErrorException($exception);
         }
 
-        return array_merge($response, $restAPIResponse['payload']);
+        return $restAPIResponse['payload'];
+    }
+    
+    /**
+     * @param ColorSystem $colorSystem
+     * @param string $colorName
+     * @return array{
+     *     name_short?: string,
+     *     name_full?: string,
+     *     systems?: array<int, string>,
+     *     prefix?: string,
+     *     suffix?: string,
+     *     values: array<string, array<string|int, int|float|string>>
+     * }
+     * @throws APIKeyMissingException
+     * @throws RequestErrorException
+     */
+    public function requestColorValue(ColorSystem $colorSystem, string $colorName): array
+    {
+        $uri = self::getURI().'/'.$colorSystem->getValue();
+
+        $colorNameSlug = urlencode(strtolower($colorName));
+        $uri .= '/'.$colorNameSlug;
+
+        $uri .= '.json';
+
+        $apiToken = self::$apiKey;
+
+        if (null === $apiToken) {
+            throw new APIKeyMissingException();
+        }
+
+        $query = http_build_query([
+            'token' => $apiToken,
+        ]);
+
+        $uri .= '?'.$query;
+
+        try {
+            $guzzleResponse = $this->client->request('GET', $uri);
+            $responseBody = $guzzleResponse->getBody()->getContents();
+            /**
+             * @var array{
+             *     payload: array<mixed>
+             * } $restAPIResponse
+             */
+            $restAPIResponse = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
+        } catch (GuzzleException|JsonException $exception) {
+            throw new RequestErrorException($exception);
+        }
+
+        return $restAPIResponse['payload'];
     }
 }

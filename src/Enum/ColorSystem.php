@@ -29,27 +29,12 @@ use MyCLabs\Enum\Enum;
  */
 final class ColorSystem extends Enum
 {
-    /** @phpstan-ignore-next-line */
     private const CIELAB = 'cielab';
-
-    /** @phpstan-ignore-next-line */
     private const CMYK = 'cmyk';
-
-    /** @phpstan-ignore-next-line */
     private const HEX = 'hex';
-
-    /** @phpstan-ignore-next-line */
     private const HKS = 'hks';
-
-    /** @phpstan-ignore-next-line */
     private const HSL = 'hsl';
-
-    /** @phpstan-ignore-next-line */
     private const PANTONE = 'pantone';
-
-    /** @phpstan-ignore-next-line */
     private const RAL = 'ral';
-
-    /** @phpstan-ignore-next-line */
     private const RGB = 'rgb';
 }

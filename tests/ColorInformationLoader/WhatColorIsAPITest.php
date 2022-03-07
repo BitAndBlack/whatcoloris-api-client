@@ -18,11 +18,11 @@ use WhatColorIs\APIClient\Exception\APIKeyMissingException;
 
 class WhatColorIsAPITest extends TestCase
 {
-    public function testRequest(): void
+    public function testRequestColorSystem(): void
     {
         $this->expectException(APIKeyMissingException::class);
         
         $whatColorIsAPI = new WhatColorIsAPI();
-        $whatColorIsAPI->request(ColorSystem::PANTONE());
+        $whatColorIsAPI->requestColorSystem(ColorSystem::PANTONE());
     }
 }
