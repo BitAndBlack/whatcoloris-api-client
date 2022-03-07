@@ -79,7 +79,20 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
     /**
      * @param ColorSystem $colorSystem
      * @param string|null $colorName
-     * @return array<mixed>
+     * @return array{
+     *     name_short?: string,
+     *     name_full?: string,
+     *     systems?: array<int, string>,
+     *     prefix?: string,
+     *     suffix?: string,
+     *     values: array<string, array<string|int, int|float|string>>
+     * }|array{
+     *     systems: array{
+     *         system: string,
+     *         prefix: string,
+     *         suffix: string,
+     *     }
+     * }
      * @throws APIKeyMissingException
      * @throws RequestErrorException
      */
@@ -87,6 +100,15 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
     {
         $uri = self::getURI().'/'.$colorSystem->getValue();
 
+        $response = null !== $colorName
+            ? [
+                'values' => [],
+            ]
+            : [
+                'systems' => [],
+            ]
+        ;
+        
         if (null !== $colorName) {
             $colorNameSlug = urlencode(strtolower($colorName));
             $uri .= '/'.$colorNameSlug;
@@ -112,13 +134,13 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
             /**
              * @var array{
              *     payload: array<mixed>
-             * } $response
+             * } $restAPIResponse
              */
-            $response = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
+            $restAPIResponse = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
         } catch (GuzzleException|JsonException $exception) {
             throw new RequestErrorException($exception);
         }
 
-        return $response['payload'];
+        return array_merge($response, $restAPIResponse['payload']);
     }
 }
