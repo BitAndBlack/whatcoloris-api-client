@@ -31,7 +31,7 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
     private ClientInterface $client;
 
     /**
-     * @param \GuzzleHttp\ClientInterface|null $client
+     * @param ClientInterface|null $client
      */
     public function __construct(ClientInterface $client = null)
     {
@@ -83,28 +83,15 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
      *         system: string,
      *         prefix: string,
      *         suffix: string,
-     *     }>
+     *     }>,
+     *     values?: array<int, array{mixed}>
      * }
      * @throws APIKeyMissingException
      * @throws RequestErrorException
      */
     public function requestColorSystem(ColorSystem $colorSystem): array
     {
-        $uri = self::getURI().'/'.$colorSystem->getValue();
-
-        $uri .= '.json';
-        
-        $apiToken = self::$apiKey;
-        
-        if (null === $apiToken) {
-            throw new APIKeyMissingException();
-        }
-        
-        $query = http_build_query([
-            'token' => $apiToken,
-        ]);
-
-        $uri .= '?'.$query;
+        $uri = $this->buildURI($colorSystem);
 
         try {
             $guzzleResponse = $this->client->request('GET', $uri);
@@ -144,24 +131,7 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
      */
     public function requestColorValue(ColorSystem $colorSystem, string $colorName): array
     {
-        $uri = self::getURI().'/'.$colorSystem->getValue();
-
-        $colorNameSlug = urlencode(strtolower($colorName));
-        $uri .= '/'.$colorNameSlug;
-
-        $uri .= '.json';
-
-        $apiToken = self::$apiKey;
-
-        if (null === $apiToken) {
-            throw new APIKeyMissingException();
-        }
-
-        $query = http_build_query([
-            'token' => $apiToken,
-        ]);
-
-        $uri .= '?'.$query;
+        $uri = $this->buildURI($colorSystem, $colorName);
 
         try {
             $guzzleResponse = $this->client->request('GET', $uri);
@@ -184,5 +154,38 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
         }
 
         return $restAPIResponse['payload'];
+    }
+
+    /**
+     * @param ColorSystem $colorSystem
+     * @param string|null $colorName
+     * @return string
+     * @throws APIKeyMissingException
+     */
+    private function buildURI(ColorSystem $colorSystem, string $colorName = null): string
+    {
+        $uri = self::getURI().'/'.$colorSystem->getValue();
+
+        if (null !== $colorName) {
+            $colorName = strtolower($colorName);
+            $colorNameSlug = urlencode($colorName);
+            $uri .= '/'.$colorNameSlug;
+        }
+
+        $uri .= '.json';
+
+        $apiToken = self::$apiKey;
+
+        if (null === $apiToken) {
+            throw new APIKeyMissingException();
+        }
+
+        $query = http_build_query([
+            'token' => $apiToken,
+        ]);
+
+        $uri .= '?'.$query;
+        
+        return $uri;
     }
 }
