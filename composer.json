@@ -1,6 +1,6 @@
 {
     "name": "whatcoloris/api-client",
-    "description": "PHP client the WhatColorIs REST API.",
+    "description": "PHP client for the WhatColorIs REST API.",
     "license": "MIT",
     "type": "library",
     "authors": [

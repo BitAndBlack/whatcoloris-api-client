@@ -6,7 +6,7 @@
 
 # WhatColorIs API Client
 
-A PHP client the [WhatColorIs](https://www.whatcolor.is) REST API.
+A PHP client for the [WhatColorIs](https://www.whatcolor.is) REST API.
 
 ## Installation 
 
