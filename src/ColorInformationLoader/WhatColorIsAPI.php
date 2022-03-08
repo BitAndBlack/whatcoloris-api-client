@@ -84,7 +84,7 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
      *         prefix: string,
      *         suffix: string,
      *     }>,
-     *     values?: array<int, array{mixed}>
+     *     values?: array<int, array<string, int|float|string>>
      * }
      * @throws APIKeyMissingException
      * @throws RequestErrorException

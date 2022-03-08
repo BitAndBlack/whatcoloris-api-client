@@ -26,7 +26,7 @@ interface ColorInformationLoaderInterface
      *         prefix: string,
      *         suffix: string,
      *     }>,
-     *     values?: array<int, array{mixed}>
+     *     values?: array<int, array<string, int|float|string>>
      * }
      */
     public function requestColorSystem(ColorSystem $colorSystem): array;
