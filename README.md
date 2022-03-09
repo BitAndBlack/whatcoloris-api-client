@@ -14,19 +14,62 @@ This library is made for the use with [Composer](https://packagist.org/packages/
 
 ## Usage
 
-**Please note** that this library requires you to have a valid API token.
+**Please note**: this library requires you to have a valid API token.
+
+### Set up the client
+
+Add you API token at first and initialize the client then:
 
 ```php
 <?php
 
 use WhatColorIs\APIClient\ColorInformationLoader\WhatColorIsAPI;
-use WhatColorIs\APIClient\Enum\ColorSystem;
 
 WhatColorIsAPI::setApiKey('token');
 
 $whatColorIsAPI = new WhatColorIsAPI();
-$response = $whatColorIsAPI->requestColorValue(ColorSystem::RGB(), '125 255 0');
 ```
+
+### Request a color system
+
+Request information about a specific color system:
+
+```php
+<?php
+
+use WhatColorIs\APIClient\Enum\ColorSystem;
+
+$response = $whatColorIsAPI->requestColorSystem(ColorSystem::PANTONE());
+```
+
+### Request a color value
+
+Request information about a specific color:
+
+```php
+<?php
+
+use WhatColorIs\APIClient\Enum\ColorSystem;
+
+$response = $whatColorIsAPI->requestColorValue(ColorSystem::PANTONE(), 'PANTONE 215 C');
+```
+
+### Integration
+
+You don't need to handle the response data by your own. The [Bit&Black Colors library](https://packagist.org/packages/bitandblack/colors) has a perfect integration and allows to handle the colors in an object-oriented way.
+
+### Available color systems
+
+The available color systems are:
+
+-   `CIELAB`
+-   `CMYK`
+-   `HEX`
+-   `HKS`
+-   `HSL`
+-   `PANTONE`
+-   `RAL`
+-   `RGB`
 
 ## Help 
 
