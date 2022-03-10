@@ -12,6 +12,8 @@
 namespace WhatColorIs\APIClient\ColorInformationLoader;
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use WhatColorIs\APIClient\Enum\ColorSystem;
 use WhatColorIs\APIClient\Exception\APIKeyMissingException;
 use GuzzleHttp\Client;
@@ -32,13 +34,16 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
     private ClientInterface $client;
     
     private ?ResponseInterface $lastResponse = null;
+    
+    private LoggerInterface $logger;
 
     /**
      * @param ClientInterface|null $client
      */
-    public function __construct(ClientInterface $client = null)
+    public function __construct(ClientInterface $client = null, LoggerInterface $logger = null)
     {
         $this->client = $client ?? new Client();
+        $this->logger = $logger ?? new NullLogger();
     }
 
     /**
@@ -246,6 +251,8 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
      */
     private function request(string $uri): string
     {
+        $this->logger->debug('Requesting uri "'.$uri.'".');
+        
         try {
             $guzzleResponse = $this->client->request(
                 'GET', 
