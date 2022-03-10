@@ -20,6 +20,7 @@ interface ColorInformationLoaderInterface
 {
     /**
      * @param ColorSystem $colorSystem Name of the requested color system.
+     * @param bool $includeColorValues If all available color values should be included too.
      * @return array{
      *     systems: array<int, array{
      *         system: string,
@@ -29,7 +30,7 @@ interface ColorInformationLoaderInterface
      *     values?: array<int, array<string, int|float|string>>
      * }
      */
-    public function requestColorSystem(ColorSystem $colorSystem): array;
+    public function requestColorSystem(ColorSystem $colorSystem, bool $includeColorValues = false): array;
 
     /**
      * @param ColorSystem $colorSystem Name of the requested color system.

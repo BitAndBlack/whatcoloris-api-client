@@ -80,7 +80,8 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
     }
 
     /**
-     * @param ColorSystem $colorSystem
+     * @param ColorSystem $colorSystem Name of the requested color system.
+     * @param bool $includeColorValues If all available color values should be included too.
      * @return array{
      *     systems: array<int, array{
      *         system: string,
@@ -92,9 +93,13 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
      * @throws APIKeyMissingException
      * @throws RequestErrorException
      */
-    public function requestColorSystem(ColorSystem $colorSystem): array
+    public function requestColorSystem(ColorSystem $colorSystem, bool $includeColorValues = false): array
     {
         $uri = $this->buildURI($colorSystem);
+        
+        if ($includeColorValues) {
+            $uri = $this->buildURI($colorSystem, null, ['includeColorValues' => true]);
+        }
 
         $responseBody = $this->request($uri);
 
