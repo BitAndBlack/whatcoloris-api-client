@@ -80,26 +80,61 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
     }
 
     /**
+     * Requests information about a color system, for example all libraries of `PANTONE`.
+     *
      * @param ColorSystem $colorSystem Name of the requested color system.
-     * @param bool $includeColorValues If all available color values should be included too.
      * @return array{
      *     systems: array<int, array{
      *         system: string,
      *         prefix: string,
      *         suffix: string,
      *     }>,
-     *     values?: array<int, array<string, int|float|string>>
      * }
      * @throws APIKeyMissingException
      * @throws RequestErrorException
      */
-    public function requestColorSystem(ColorSystem $colorSystem, bool $includeColorValues = false): array
+    public function requestColorSystem(ColorSystem $colorSystem): array
     {
         $uri = $this->buildURI($colorSystem);
-        
-        if ($includeColorValues) {
-            $uri = $this->buildURI($colorSystem, null, ['includeColorValues' => true]);
+        $responseBody = $this->request($uri);
+
+        try {
+            /**
+             * @var array{
+             *     payload: array{
+             *         systems: array<int, array{
+             *             system: string,
+             *             prefix: string,
+             *             suffix: string,
+             *         }>
+             *     }
+             * } $restAPIResponse
+             */
+            $restAPIResponse = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $exception) {
+            throw new RequestErrorException($exception);
         }
+
+        return $restAPIResponse['payload'];
+    }
+
+    /**
+     * Requests all available colors of a color system, for example all colors of `PANTONE`.
+     *
+     * @param ColorSystem $colorSystem Name of the requested color system.
+     * @return array{
+     *     values?: array<int, array{
+     *         name_short: string,
+     *         name_full: string,
+     *         values: array<string, array<string, int|float|string>>
+     *     }>
+     * }
+     * @throws APIKeyMissingException
+     * @throws RequestErrorException
+     */
+    public function requestColorSystemValues(ColorSystem $colorSystem): array
+    {
+        $uri = $this->buildURI($colorSystem);
 
         $responseBody = $this->request($uri);
 
@@ -122,10 +157,12 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
 
         return $restAPIResponse['payload'];
     }
-    
+
     /**
-     * @param ColorSystem $colorSystem
-     * @param string $colorName
+     * Requests a specific color value, for example `PANTONE 215 C`.
+     *
+     * @param ColorSystem $colorSystem Name of the requested color system.
+     * @param string $colorName Name of a specific color.
      * @return array{
      *     name_short: string,
      *     name_full: string,
@@ -166,10 +203,9 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
     /**
      * @param ColorSystem $colorSystem
      * @param string|null $colorName
-     * @param array<string, int|float|string|bool> $parameters
      * @return string
      */
-    private function buildURI(ColorSystem $colorSystem, string $colorName = null, array $parameters = []): string
+    private function buildURI(ColorSystem $colorSystem, string $colorName = null): string
     {
         $uri = self::getURI().'/'.$colorSystem->getValue();
 
@@ -180,10 +216,6 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
         }
 
         $uri .= '.json';
-        
-        $query = http_build_query($parameters);
-
-        $uri .= '?'.$query;
         
         return $uri;
     }

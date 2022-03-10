@@ -19,20 +19,36 @@ use WhatColorIs\APIClient\Enum\ColorSystem;
 interface ColorInformationLoaderInterface
 {
     /**
+     * Requests information about a color system, for example all libraries of `PANTONE`.
+     *
      * @param ColorSystem $colorSystem Name of the requested color system.
-     * @param bool $includeColorValues If all available color values should be included too.
      * @return array{
      *     systems: array<int, array{
      *         system: string,
      *         prefix: string,
      *         suffix: string,
      *     }>,
-     *     values?: array<int, array<string, int|float|string>>
      * }
      */
-    public function requestColorSystem(ColorSystem $colorSystem, bool $includeColorValues = false): array;
+    public function requestColorSystem(ColorSystem $colorSystem): array;
 
     /**
+     * Requests all available colors of a color system, for example all colors of `PANTONE`.
+     *
+     * @param ColorSystem $colorSystem Name of the requested color system.
+     * @return array{
+     *     values?: array<int, array{
+     *         name_short: string,
+     *         name_full: string,
+     *         values: array<string, array<string, int|float|string>>
+     *     }>
+     * }
+     */
+    public function requestColorSystemValues(ColorSystem $colorSystem): array;
+
+    /**
+     * Requests a specific color value, for example `PANTONE 215 C`.
+     * 
      * @param ColorSystem $colorSystem Name of the requested color system.
      * @param string $colorName        Name of a specific color.
      * @return array{
