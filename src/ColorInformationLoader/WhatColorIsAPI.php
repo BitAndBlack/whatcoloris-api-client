@@ -11,6 +11,7 @@
 
 namespace WhatColorIs\APIClient\ColorInformationLoader;
 
+use Psr\Http\Message\ResponseInterface;
 use WhatColorIs\APIClient\Enum\ColorSystem;
 use WhatColorIs\APIClient\Exception\APIKeyMissingException;
 use GuzzleHttp\Client;
@@ -29,6 +30,8 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
     private static ?string $apiKey = null;
     
     private ClientInterface $client;
+    
+    private ?ResponseInterface $lastResponse = null;
 
     /**
      * @param ClientInterface|null $client
@@ -93,9 +96,9 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
     {
         $uri = $this->buildURI($colorSystem);
 
+        $responseBody = $this->request($uri);
+
         try {
-            $guzzleResponse = $this->client->request('GET', $uri);
-            $responseBody = $guzzleResponse->getBody()->getContents();
             /**
              * @var array{
              *     payload: array{
@@ -108,7 +111,7 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
              * } $restAPIResponse
              */
             $restAPIResponse = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
-        } catch (GuzzleException|JsonException $exception) {
+        } catch (JsonException $exception) {
             throw new RequestErrorException($exception);
         }
 
@@ -132,10 +135,9 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
     public function requestColorValue(ColorSystem $colorSystem, string $colorName): array
     {
         $uri = $this->buildURI($colorSystem, $colorName);
-
+        $responseBody = $this->request($uri);
+        
         try {
-            $guzzleResponse = $this->client->request('GET', $uri);
-            $responseBody = $guzzleResponse->getBody()->getContents();
             /**
              * @var array{
              *     payload: array{
@@ -149,7 +151,7 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
              * } $restAPIResponse
              */
             $restAPIResponse = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
-        } catch (GuzzleException|JsonException $exception) {
+        } catch (JsonException $exception) {
             throw new RequestErrorException($exception);
         }
 
@@ -159,10 +161,10 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
     /**
      * @param ColorSystem $colorSystem
      * @param string|null $colorName
+     * @param array<string, int|float|string|bool> $parameters
      * @return string
-     * @throws APIKeyMissingException
      */
-    private function buildURI(ColorSystem $colorSystem, string $colorName = null): string
+    private function buildURI(ColorSystem $colorSystem, string $colorName = null, array $parameters = []): string
     {
         $uri = self::getURI().'/'.$colorSystem->getValue();
 
@@ -173,19 +175,62 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
         }
 
         $uri .= '.json';
+        
+        $query = http_build_query($parameters);
 
+        $uri .= '?'.$query;
+        
+        return $uri;
+    }
+
+    /**
+     * @return string[]
+     * @throws APIKeyMissingException
+     */
+    private function getHeaders(): array
+    {
         $apiToken = self::$apiKey;
 
         if (null === $apiToken) {
             throw new APIKeyMissingException();
         }
-
-        $query = http_build_query([
-            'token' => $apiToken,
-        ]);
-
-        $uri .= '?'.$query;
         
-        return $uri;
+        return [
+            'Authorization' => 'Bearer '.$apiToken,
+            'Accept' => 'application/json',
+        ];
+    }
+
+    /**
+     * @param string $uri
+     * @return string
+     * @throws APIKeyMissingException
+     * @throws RequestErrorException
+     */
+    private function request(string $uri): string
+    {
+        try {
+            $guzzleResponse = $this->client->request(
+                'GET', 
+                $uri, 
+                [
+                    'headers' => $this->getHeaders()
+                ]
+            );
+            $this->lastResponse = $guzzleResponse;
+            return $guzzleResponse->getBody()->getContents();
+        } catch (GuzzleException $exception) {
+            throw new RequestErrorException($exception);
+        }
+    }
+
+    /**
+     * Returns the last response.
+     *
+     * @return ResponseInterface|null
+     */
+    public function getLastResponse(): ?ResponseInterface
+    {
+        return $this->lastResponse;
     }
 }
