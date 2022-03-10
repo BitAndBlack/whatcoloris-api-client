@@ -134,7 +134,7 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
      */
     public function requestColorSystemValues(ColorSystem $colorSystem): array
     {
-        $uri = $this->buildURI($colorSystem);
+        $uri = $this->buildURI($colorSystem, 'all');
 
         $responseBody = $this->request($uri);
 
