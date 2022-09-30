@@ -11,15 +11,15 @@
 
 namespace WhatColorIs\APIClient\ColorInformationLoader;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\GuzzleException;
+use JsonException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use WhatColorIs\APIClient\Enum\ColorSystem;
 use WhatColorIs\APIClient\Exception\APIKeyMissingException;
-use GuzzleHttp\Client;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\GuzzleException;
-use JsonException;
 use WhatColorIs\APIClient\Exception\RequestErrorException;
 
 /**
@@ -212,12 +212,12 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
      */
     private function buildURI(ColorSystem $colorSystem, string $colorName = null): string
     {
-        $uri = self::getURI().'/'.$colorSystem->getValue();
+        $uri = self::getURI() . '/' . $colorSystem->getValue();
 
         if (null !== $colorName) {
             $colorName = strtolower($colorName);
             $colorNameSlug = urlencode($colorName);
-            $uri .= '/'.$colorNameSlug;
+            $uri .= '/' . $colorNameSlug;
         }
 
         $uri .= '.json';
@@ -238,7 +238,7 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
         }
         
         return [
-            'Authorization' => 'Bearer '.$apiToken,
+            'Authorization' => 'Bearer ' . $apiToken,
             'Accept' => 'application/json',
         ];
     }
@@ -251,12 +251,12 @@ class WhatColorIsAPI implements ColorInformationLoaderInterface
      */
     private function request(string $uri): string
     {
-        $this->logger->debug('Requesting uri "'.$uri.'".');
+        $this->logger->debug('Requesting uri "' . $uri . '".');
         
         try {
             $guzzleResponse = $this->client->request(
-                'GET', 
-                $uri, 
+                'GET',
+                $uri,
                 [
                     'headers' => $this->getHeaders()
                 ]

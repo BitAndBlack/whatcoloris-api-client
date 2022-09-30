@@ -11,8 +11,8 @@
 
 namespace WhatColorIs\APIClient\Tests\ColorInformationLoader;
 
-use WhatColorIs\APIClient\ColorInformationLoader\WhatColorIsAPI;
 use PHPUnit\Framework\TestCase;
+use WhatColorIs\APIClient\ColorInformationLoader\WhatColorIsAPI;
 use WhatColorIs\APIClient\Enum\ColorSystem;
 use WhatColorIs\APIClient\Exception\APIKeyMissingException;
 

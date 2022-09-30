@@ -15,7 +15,7 @@ use MyCLabs\Enum\Enum;
 
 /**
  * Class ColorSystem
- * 
+ *
  * @package Color\System\Enum
  * @method static ColorSystem CIELAB()
  * @method static ColorSystem CMYK()

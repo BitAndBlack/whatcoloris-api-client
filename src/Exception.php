@@ -13,17 +13,17 @@ namespace WhatColorIs\APIClient;
 
 /**
  * Class Exception
- * 
+ *
  * @package Color
  */
 class Exception extends \Exception
 {
     /**
      * Exception constructor.
-     * 
+     *
      * @param string $message
      */
-    public function __construct(string $message) 
+    public function __construct(string $message)
     {
         parent::__construct($message);
     }

@@ -48,7 +48,7 @@ interface ColorInformationLoaderInterface
 
     /**
      * Requests a specific color value, for example `PANTONE 215 C`.
-     * 
+     *
      * @param ColorSystem $colorSystem Name of the requested color system.
      * @param string $colorName        Name of a specific color.
      * @return array{
